@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Prediccion de Etiqueta de una Review</title>
+</head>
+<body>
+    <h1>Prediccion de Etiqueta de Review</h1>
+    <form id="reviewForm">
+        <textarea id="reviewText" name="reviewText" rows="4" cols="50" placeholder="Ingrese su Review aqui.." onchange="getText(this.value)"></textarea><br>
+        <button type="button" onclick="submitReview()">Enviar Review</button>
+    </form>
+    <h2>Resultado de la Prediccion:</h2>
+    <div id="predictionResult"></div>
+
+    <script>
+        function getText(ish) {
+            document.getElementById('reviewText').innerText = ish;
+        }
+
+        function submitReview() {
+            const reviewText = document.getElementById('reviewText').value;
+            document.getElementById('predictionResult').innerText = 'Cargando...';
+            console.log(reviewText);
+
+            // hacer post en /predic
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: {"Review" : reviewText} ,
+            })
+                .then(response => response.json())
+
+        }
+    </script>
+</body>
+</html>
