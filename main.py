@@ -6,6 +6,7 @@ from pydantic import BaseModel
 import pandas as pd
 from joblib import load
 from DataModel import DataModel
+from PredictionModel import Model
 
 # Definición de la FastAPI app
 app = FastAPI()
@@ -13,6 +14,9 @@ app = FastAPI()
 # Modelo de datos para la entrada de la reseña
 class Review(BaseModel):
     Review: str
+
+# Crear modelo
+model = Model()
 
 # raiz
 @app.get("/")
@@ -24,8 +28,9 @@ def read_root():
 # Post para hacer predicciones
 @app.post("/predict")
 def make_predictions(dataModel: DataModel):
-   df = pd.DataFrame(dataModel.dict(), columns=dataModel.dict().keys(), index=[0])
-   return df["Review"][0]
+   text = dataModel.Review
+   result = model.make_predictions(dataModel.Review)
+   return [text, result.tolist()[0]]
    
 
 # Get review

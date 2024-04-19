@@ -2,16 +2,19 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Prediccion de Etiqueta de una Review</title>
+    <title>Turismo de Los ALPES</title>
+    
 </head>
 <body>
-    <h1>Prediccion de Etiqueta de Review</h1>
+    <h1>Turismo de Los ALPES</h1>
+    <h2>Prediccion de Etiqueta de un Review</h2>
     <form id="reviewForm">
         <textarea id="reviewText" name="reviewText" rows="4" cols="50" placeholder="Ingrese su Review aqui.." onchange="getText(this.value)"></textarea><br>
         <button type="button" onclick="submitReview()">Enviar Review</button>
     </form>
     <h2>Resultado de la Prediccion:</h2>
-    <div id="predictionResult"></div>
+    <div id="predictionResult" style="font-size: larger; color: #100088;" ></div>
+
 
     <script>
         function getText(ish) {
@@ -21,18 +24,36 @@
         function submitReview() {
             const reviewText = document.getElementById('reviewText').value;
             document.getElementById('predictionResult').innerText = 'Cargando...';
-            console.log(reviewText);
 
-            // hacer post en /predic
-            fetch('/predict', {
+            fetch('http://127.0.0.1:8000/predict', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: {"Review" : reviewText} ,
+                body: JSON.stringify({ "Review" : reviewText }),
             })
-                .then(response => response.json())
+                .then((response) => response.json())
+                .then((data) => {
 
+                    const reviewData = JSON.stringify({
+                    "Review": reviewText,
+                    "clase": data[1]
+                    });
+                    
+                    //changeLabelColor(data[1]);
+                    document.getElementById('predictionResult').innerText = "Etiqueta: " + data[1];
+                    
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+
+        }
+
+        function changeLabelColor(label) {
+            // Change the color of the label based on the value label 1-5
+            const color = label === 1 ? 'red' : label === 2 ? 'orange' : label === 3 ? 'yellow' : label === 4 ? 'lightgreen' : 'green';
+            document.getElementById('predictionResult').style.color = color;
         }
     </script>
 </body>

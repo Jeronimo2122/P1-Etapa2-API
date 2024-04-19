@@ -1,14 +1,15 @@
 from joblib import load
-import pandas as pd
-
-from DataModel import DataModel
 
 class Model:
-
-    def __init__(self,columns):
-        self.model = load("assets\modelo_NB.pkl")
+    def __init__(self):
+        self.model = load("assets/modelo.joblib")
+        self.pipe = load("assets/vectorizador.joblib")
 
     def make_predictions(self, data):
-        result = self.model.predict(data)
+        # Asegurarse de que 'data' es una lista, incluso si solo hay una entrada
+        if isinstance(data, str):
+            data = [data]
+        proces = self.pipe.transform(data)
+        result = self.model.predict(proces)
         return result
 
